@@ -1,7 +1,7 @@
 # Technical Report: Azure Free Tier Provisioning and Cloud Governance Analysis
 
 **Submitted By:** Ngozi Ajah  
-**Date:** June 2026  
+**Date:** May 2026  
 **Course/Platform:** Darey.io DevOps Track
 
 ---
