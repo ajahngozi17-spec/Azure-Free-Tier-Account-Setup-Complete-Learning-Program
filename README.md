@@ -1,7 +1,7 @@
 # Technical Report: Azure Free Tier Provisioning and Cloud Governance Analysis
 
 **Submitted By:** Ngozi Ajah  
-**Date:** May 2026  
+**Date:** May, 2026  
 **Course/Platform:** Darey.io DevOps Track
 
 ---
@@ -53,22 +53,21 @@ Upon successful tenant activation, Microsoft provisioned a **$200 USD Free Credi
 * **Usage Limit:** Max $200 USD equivalent.
 * **Time Horizon:** Limited to a **30-day (1-month) usage window**, after which any unspent credit expires.
 
+### 1.5 Azure Portal Navigation & Workspace Customization
 
- ### 1.5 Azure Portal Navigation & Workspace Customization
-
-### Portal Navigation Guide
+#### Interface Navigation Guide
 Navigating the Azure Portal efficiently relies on three foundational interface components:
 * **Global Search Bar (Top Center):** The primary entry point for resource location. Entering strings such as "Storage accounts" or "Microsoft Entra ID" provides instantaneous access to services, resource instances, and documentation.
 * **The 'All Services' Menu:** Accessed via the hamburger icon (top-left corner). This menu aggregates all available cloud services categorized by functional domains (Compute, Networking, Storage, etc.).
 * **Breadcrumbs:** Located dynamically below the global navigation bar, breadcrumbs establish a tracking path (e.g., *Home > Resource Groups > MyResourceGroup*), allowing seamless upward directory traversal.
 
-### Custom Dashboard Configuration
+#### Custom Dashboard Configuration
 To streamline environment monitoring, a customized operational dashboard was provisioned:
 1. Navigated to the Azure Portal **Dashboard** hub and selected **Create > Custom Dashboard**.
 2. Deployed functional tiles for resource monitoring, including pinning **Resource Groups** and specific **Storage Accounts** for visibility.
 3. Configured layout configurations to prioritize active resource health.
 
-![Custom Azure Dashboard Layout](./azure-portal-home-dashboard.png)
+![Custom Azure Dashboard Layout](./azure-portal-home-dashboard.jpg)
 
 ---
 
@@ -82,13 +81,32 @@ This decision was driven by an analysis of technical and compliance factors:
 2. **Data Residency:** Maintained strict alignment with testing framework compliance regulations.
 3. **Feature Availability:** Ensured comprehensive availability for all Azure Free Tier eligible resources, specifically B-series burstable virtual machines and standard cloud storage.
 
+### 2.2 Analysis of the Shared Responsibility Model
+When deploying an Infrastructure as a Service (IaaS) resource, such as an Azure Virtual Machine, a clear delineation of operational boundaries occurs between the cloud provider (Microsoft) and the customer. 
 
-  ### 2.2 Billing, Cost Management, and Free Tier Limits
+The division of cloud responsibilities is split across the following infrastructure layers:
+
+| Layer Domain | Managed by MICROSOFT | Managed by CUSTOMER |
+| :--- | :--- | :--- |
+| **Physical Infrastructure** | Physical Datacenters, Power & Cooling, Hardware Infrastructure | *None* |
+| **Compute & Virtualization** | Hypervisor Layer, Physical Fabric Networking | Guest Operating System, System OS Patching |
+| **Network & Perimeter** | Physical Network Core | Firewall Rules (NSGs), Virtual Networks |
+| **Access & Governance** | Underlying Entra Identity Engine | Identity & Access (RBAC), Password Policies |
+| **Data & Apps** | *None* | Applications, Data Layer, Storage Security |
+
+* **Physical and Infrastructure Security:** *Microsoft Responsibility.* Microsoft maintains exclusive responsibility for the physical datacenters within the chosen region. This encompasses physical access controls, power redundancy, environmental cooling, and underlying hardware maintenance.
+* **Virtualization Fabric:** *Microsoft Responsibility.* Microsoft is responsible for managing and securing the hypervisor layer, ensuring logical isolation and robust security boundaries between the virtual machine and other cloud tenants.
+* **Guest Operating System:** *Customer Responsibility.* Responsibility was assumed for the guest operating system (e.g., Ubuntu/Windows). This requires the DevOps engineer to manage system patches, execute kernel updates, and remediate OS-level vulnerabilities.
+* **Network Access Control:** *Shared Framework / Customer Implementation.* While Microsoft provisions the underlying Network Security Group (NSG) framework, the implementation of specific firewall rules—such as restricting SSH (Port 22) or HTTP (Port 80) access—remains entirely the customer's duty.
+* **Identity and Access Management:** *Customer Responsibility.* Responsibility was held for securing access to the infrastructure. This involves configuring strict password policies, maintaining SSH keys, and utilizing Azure Role-Based Access Control (RBAC) to enforce the principle of least privilege.
+* **Data and Application Layer:** *Customer Responsibility.* Complete ownership was retained over the applications (such as Nginx or Apache) and data housed within the virtual instance. Ensuring proper encryption, secure coding practices, and data backup routines is a 100% customer-managed task.
+
+### 2.3 Billing, Cost Management, and Free Tier Limits
 
 While the Azure Free Tier provides a $200 credit window for 30 days, proactive cost governance is essential. To enforce financial guardrails, a budget threshold alert was explicitly configured:
 1. Accessed the **Cost Management + Billing** console.
 2. Selected **Budgets** and defined a baseline budget corresponding to the promotional limit.
-3. Configured an automated **Alert Condition** set at **75% of the total budget threshold** (Actual cost trigger). 
+3. Configured an automated **Alert Condition** set at **75% of the total budget threshold** (Actual cost trigger at $150.00 spent). 
 4. Assigned notification channels to alert engineering personnel immediately upon crossing the threshold.
 
 ![Azure Budget and 75% Threshold Alert Configuration](./azure-subscription-budgets.png)
@@ -104,53 +122,22 @@ To ensure compliance with structural free tier limits and avoid unexpected servi
 | **Developer Tools** | *None* | Azure DevOps (Up to 5 users), App Service (10 Web/Mobile Apps) |
 | **Networking** | 15 GB Outbound Data Transfer | *None* |
 
-#### Practical Identity Security Posture
-Supplementing the theoretical Shared Responsibility Model, practical identity controls were initialized to secure the root administration layer:
-* **Multi-Factor Authentication (MFA):** Enforced tenant-wide by configuring Microsoft Entra ID Security Defaults. This mandates MFA via the Microsoft Authenticator app for all administrative workflows, blocking credential-stuffing threat vectors.
-* **Password Policy:** Implemented strict character restrictions during identity creation, enforcing a minimum 12-character alphanumeric complexity framework.
-
-
-### 2.2.1 Practical Identity Security Posture
+### 2.4 Practical Identity Security Posture
 Supplementing the theoretical Shared Responsibility Model, practical identity controls were initialized to secure the root administration layer:
 * **Multi-Factor Authentication (MFA):** Enforced tenant-wide by configuring Microsoft Entra ID (formerly Azure Active Directory) Security Defaults. This mandates MFA via the Microsoft Authenticator app for all administrative workflows, blocking credential-stuffing threat vectors.
 * **Password Policy:** Implemented strict character restrictions during identity creation, enforcing a minimum 12-character alphanumeric complexity framework.
 * **Trusted Devices:** Administrative portal authentication sessions are bound to verified devices, restricting root-level changes from unauthenticated geographic coordinates.
----
 
-### 2.3 Analysis of the Shared Responsibility Model
-When deploying an Infrastructure as a Service (IaaS) resource, such as an Azure Virtual Machine, a clear delineation of operational boundaries occurs between the cloud provider (Microsoft) and the customer.
-┌─────────────────────────────────────────────────────────────┐
-│             Shared Responsibility Matrix (IaaS)             │
-├──────────────────────────────┬──────────────────────────────┤
-│    Managed by MICROSOFT      │      Managed by CUSTOMER     │
-├──────────────────────────────┼──────────────────────────────┤
-│ 🖥️ Physical Datacenters       │ 🐧 Guest Operating System    │
-│ ⚡ Power & Cooling            │ 🔄 System OS Patching        │
-│ 🛡️ Hypervisor Layer           │ 🧱 Firewall Rules (NSGs)     │
-│ 🔌 Physical Network/Fabric   │ 🔑 Identity & Access (RBAC)  │
-│ 💾 Hardware Infrastructure   │ 📦 Application & Data Layer  │
-└──────────────────────────────┴──────────────────────────────┘
-* **Physical and Infrastructure Security:** *Microsoft Responsibility.* Microsoft maintains exclusive responsibility for the physical datacenters within the chosen region. This encompasses physical access controls, power redundancy, environmental cooling, and underlying hardware maintenance.
-* **Virtualization Fabric:** *Microsoft Responsibility.* Microsoft is responsible for managing and securing the hypervisor layer, ensuring logical isolation and robust security boundaries between the virtual machine and other cloud tenants.
-* **Guest Operating System:** *Customer Responsibility.* Responsibility was assumed for the guest operating system (e.g., Ubuntu/Windows). This requires the DevOps engineer to manage system patches, execute kernel updates, and remediate OS-level vulnerabilities.
-* **Network Access Control:** *Shared Framework / Customer Implementation.* While Microsoft provisions the underlying Network Security Group (NSG) framework, the implementation of specific firewall rules—such as restricting SSH (Port 22) or HTTP (Port 80) access—remains entirely the customer's duty.
-* **Identity and Access Management:** *Customer Responsibility.* Responsibility was held for securing access to the infrastructure. This involves configuring strict password policies, maintaining SSH keys, and utilizing Azure Role-Based Access Control (RBAC) to enforce the principle of least privilege.
-* **Data and Application Layer:** *Customer Responsibility.* Complete ownership was retained over the applications (such as Nginx or Apache) and data housed within the virtual instance. Ensuring proper encryption, secure coding practices, and data backup routines is a 100% customer-managed task.
----
-
-### 2.4 Conclusion
+### 2.5 Conclusion
 The deployment successfully demonstrated that while Microsoft guarantees the integrity, availability, and security of the underlying physical and virtualization infrastructure, the DevOps engineer remains fully accountable for securing the operational environment, network access rules, and data payloads hosted within that environment.
 
-
-### 2.5 Troubleshooting
+### 2.6 Troubleshooting
 * **Issue: Credit alert email not received.**
   * *Fix:* Check Spam/Junk folders and verify that the email address entered in the Budget Alert configuration is spelled correctly.
 * **Issue: Cannot provision a B1s VM.**
   * *Fix:* Ensure you are selecting a supported region (like East US or West Europe) where the B1s sizes are available under the free tier.
-    
 
-### 2.6 Next Steps Checklist
+### 2.7 Next Steps Checklist
 - [ ] Monitor the $200 credit balance weekly via the Cost Management dashboard.
 - [ ] Clean up/delete resources (Storage accounts, resource groups) before the 30-day trial expires to avoid automated billing.
 - [ ] Set up a secondary IAM User with restrictive permissions for daily tasks instead of using the Root account.
-
