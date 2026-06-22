@@ -67,7 +67,7 @@ To streamline environment monitoring, a customized operational dashboard was pro
 2. Deployed functional tiles for resource monitoring, including pinning **Resource Groups** and specific **Storage Accounts** for visibility.
 3. Configured layout configurations to prioritize active resource health.
 
-![Custom Azure Dashboard Layout](./azure-portal-home-dashboard.jpg)
+![Custom Azure Dashboard Layout](./azure-portal-home-dashboard.png)
 
 ---
 
