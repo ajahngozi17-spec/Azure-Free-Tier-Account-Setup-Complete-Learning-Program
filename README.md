@@ -83,7 +83,7 @@ This decision was driven by an analysis of technical and compliance factors:
 3. **Feature Availability:** Ensured comprehensive availability for all Azure Free Tier eligible resources, specifically B-series burstable virtual machines and standard cloud storage.
 
 
-  ### 2.2 Billing and Cost Management Execution
+  ### 2.2 Billing, Cost Management, and Free Tier Limits
 
 While the Azure Free Tier provides a $200 credit window for 30 days, proactive cost governance is essential. To enforce financial guardrails, a budget threshold alert was explicitly configured:
 1. Accessed the **Cost Management + Billing** console.
@@ -91,9 +91,9 @@ While the Azure Free Tier provides a $200 credit window for 30 days, proactive c
 3. Configured an automated **Alert Condition** set at **75% of the total budget threshold** (Actual cost trigger). 
 4. Assigned notification channels to alert engineering personnel immediately upon crossing the threshold.
 
-![Azure Budget and 75% Threshold Alert Configuration](./azure-cost management-budgets.png)
+![Azure Budget and 75% Threshold Alert Configuration](./azure-subscription-budgets.png)
 
-### Free Tier Limits & Resource Allocation Matrix
+#### Free Tier Limits & Resource Allocation Matrix
 To ensure compliance with structural free tier limits and avoid unexpected service degradation or invoicing, the following matrix details resource boundaries:
 
 | Service Category | 12 Months Free Allocation | Always Free Baseline |
@@ -103,6 +103,11 @@ To ensure compliance with structural free tier limits and avoid unexpected servi
 | **Databases** | 250 GB Azure SQL Database | 25 GB Cosmos DB (1,000 RU/s) |
 | **Developer Tools** | *None* | Azure DevOps (Up to 5 users), App Service (10 Web/Mobile Apps) |
 | **Networking** | 15 GB Outbound Data Transfer | *None* |
+
+#### Practical Identity Security Posture
+Supplementing the theoretical Shared Responsibility Model, practical identity controls were initialized to secure the root administration layer:
+* **Multi-Factor Authentication (MFA):** Enforced tenant-wide by configuring Microsoft Entra ID Security Defaults. This mandates MFA via the Microsoft Authenticator app for all administrative workflows, blocking credential-stuffing threat vectors.
+* **Password Policy:** Implemented strict character restrictions during identity creation, enforcing a minimum 12-character alphanumeric complexity framework.
 
 
 ### 2.2.1 Practical Identity Security Posture
