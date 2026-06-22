@@ -91,7 +91,7 @@ While the Azure Free Tier provides a $200 credit window for 30 days, proactive c
 3. Configured an automated **Alert Condition** set at **75% of the total budget threshold** (Actual cost trigger). 
 4. Assigned notification channels to alert engineering personnel immediately upon crossing the threshold.
 
-![Azure Budget and 75% Threshold Alert Configuration](./azure-subscription-budgets.png)
+![Azure Budget and 75% Threshold Alert Configuration](./azure-cost management-budgets.png)
 
 ### Free Tier Limits & Resource Allocation Matrix
 To ensure compliance with structural free tier limits and avoid unexpected service degradation or invoicing, the following matrix details resource boundaries:
